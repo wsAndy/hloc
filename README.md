@@ -1,6 +1,9 @@
 use docker image: wsandy95/hloc:latest
 
-docker run -it --rm --gpus all -p 8888:8888 -v "Hierarchical-Localization":/root/code -v "data":/root/data wsandy95/hloc:latest  
+docker run -it --rm --gpus all --shm-size 8G -p 8888:8888 -v "Hierarchical-Localization":/root/code -v "data":/root/data wsandy95/hloc:latest  
+
+注意： --shm-size 8G 很关键
+
 
 # hloc - the hierarchical localization toolbox
 

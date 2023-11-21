@@ -109,7 +109,7 @@ def main(sfm_dir: Path,
     assert pairs.exists(), pairs
     assert matches.exists(), matches
 
-    db_dir = sfm_dir / 'distorted' 
+    db_dir = sfm_dir
     database = db_dir / 'database.db'
 
     sfm_dir.mkdir(parents=True, exist_ok=True)

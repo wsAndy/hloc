@@ -1,6 +1,6 @@
 use docker image: wsandy95/hloc:latest
 
-docker run -it --rm --gpus all --shm-size 8G -p 8888:8888 -v "Hierarchical-Localization":/root/code -v "data":/root/data wsandy95/hloc:latest  
+docker run --name hloc_xxx -it --rm --gpus all --shm-size 8G -p 8888:8888 -v "E:\DigitalAssetsCreateTool\hloc":/root/code -v "E:\docker\nerfData\hloc":/root/data wsandy95/hloc:latest /bin/bash -c "cd /root/code && python3 runSFM.py -i /root/data/images/ -o /root/data/sfm"
 
 注意： --shm-size 8G 很关键
 

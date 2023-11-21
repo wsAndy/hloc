@@ -55,12 +55,13 @@ def run_reconstruction(sfm_dir: Path,
                        verbose: bool = False,
                        options: Optional[Dict[str, Any]] = None,
                        ) -> pycolmap.Reconstruction:
-    models_path = sfm_dir / 'models'
+    models_path = sfm_dir / 'sparse'
     models_path.mkdir(exist_ok=True, parents=True)
     logger.info('Running 3D reconstruction...')
     if options is None:
         options = {}
     options = {'num_threads': min(multiprocessing.cpu_count(), 16), **options}
+    logger.info(f'colmap mapping with option: {options}')
     with OutputCapture(verbose):
         with pycolmap.ostream():
             reconstructions = pycolmap.incremental_mapping(
@@ -82,11 +83,11 @@ def run_reconstruction(sfm_dir: Path,
     logger.info(f'Largest model is #{largest_index} '
                 f'with {largest_num_images} images.')
 
-    for filename in ['images.bin', 'cameras.bin', 'points3D.bin']:
-        if (sfm_dir / filename).exists():
-            (sfm_dir / filename).unlink()
-        shutil.move(
-            str(models_path / str(largest_index) / filename), str(sfm_dir))
+    # for filename in ['images.bin', 'cameras.bin', 'points3D.bin']:
+    #     if (sfm_dir / filename).exists():
+    #         (sfm_dir / filename).unlink()
+    #     shutil.move(
+    #         str(models_path / str(largest_index) / filename), str(sfm_dir))
     return reconstructions[largest_index]
 
 
@@ -108,8 +109,12 @@ def main(sfm_dir: Path,
     assert pairs.exists(), pairs
     assert matches.exists(), matches
 
+    db_dir = sfm_dir / 'distorted' 
+    database = db_dir / 'database.db'
+
     sfm_dir.mkdir(parents=True, exist_ok=True)
-    database = sfm_dir / 'database.db'
+    db_dir.mkdir(parents=True, exist_ok=True)
+
 
     create_empty_db(database)
     import_images(image_dir, database, camera_mode, image_list, image_options)
@@ -120,7 +125,7 @@ def main(sfm_dir: Path,
     if not skip_geometric_verification:
         estimation_and_geometric_verification(database, pairs, verbose)
     reconstruction = run_reconstruction(
-        sfm_dir, database, image_dir, verbose, mapper_options)
+        db_dir, database, image_dir, verbose, mapper_options)
     if reconstruction is not None:
         logger.info(f'Reconstruction statistics:\n{reconstruction.summary()}'
                     + f'\n\tnum_input_images = {len(image_ids)}')

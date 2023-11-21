@@ -4,17 +4,41 @@ from hloc import extract_features, match_features, reconstruction, pairs_from_re
 import pycolmap
 import logging
 import shutil
+from argparse import ArgumentParser
 
 
-images = Path('/root/data/images/')
-outputs = Path(images, '..', 'sfm/')
+parser = ArgumentParser("HLOC SFM")
+parser.add_argument("--images", "-i", required=True, type=str)
+parser.add_argument("--output", "-o", default="", type=str)
+parser.add_argument("--camera", default="PINHOLE", type=str)
+parser.add_argument("--cameraMode", default="SINGLE", type=str)
+args = parser.parse_args()
+
+images = Path( args.images ) # Path( '/root/data/images/')
+
+if not images.exists():
+    logging.error(f" Images Folder not exists.")
+    exit(-1)
+
+outputs = Path(args.output)
+if outputs == Path(''):
+    outputs = Path(images, '..', 'sfm/')
+
 sfm_pairs = outputs / 'pairs-netvlad.txt'
 sfm_dir = outputs /  'colmap' # 'sfm_superpoint+superglue'
 
 # 描述是否所有图片内参一样
 # AUTO、SINGLE、PER_FOLDER、PER_IMAGE
-camera_mode =  pycolmap.CameraMode.SINGLE
-image_options = {'camera_model': 'PINHOLE' }
+if args.cameraMode == 'AUTO':
+    camera_mode =  pycolmap.CameraMode.AUTO
+elif args.cameraMode == 'SINGLE':
+    camera_mode =  pycolmap.CameraMode.SINGLE
+elif args.cameraMode == 'PER_FOLDER':
+    camera_mode =  pycolmap.CameraMode.PER_FOLDER
+elif args.cameraMode == 'PER_IMAGE':
+    camera_mode =  pycolmap.CameraMode.PER_IMAGE
+
+image_options = {'camera_model':  args.camera }
 
 if image_options['camera_model'] != 'PINHOLE' or image_options['camera_model'] != 'SIMPLE_PINHOLE':
     distorter = True

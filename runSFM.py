@@ -40,7 +40,7 @@ elif args.cameraMode == 'PER_IMAGE':
 
 image_options = {'camera_model':  args.camera }
 
-if image_options['camera_model'] != 'PINHOLE' or image_options['camera_model'] != 'SIMPLE_PINHOLE':
+if image_options['camera_model'] != 'PINHOLE' and image_options['camera_model'] != 'SIMPLE_PINHOLE':
     distorter = True
 if distorter:
     sfm_dir = sfm_dir / 'distorted' 

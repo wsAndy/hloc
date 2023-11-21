@@ -88,8 +88,9 @@ if distorter:
         shutil.move(source_file, destination_file)
 
 else:
-    '''
-    拷贝原始图片到目标位置
-    '''
-    shutil.copytree(images, sfm_dir / 'images')
+    if model:
+        savedImagePath = Path(sfm_dir / 'images')
+        savedImagePath.mkdir(exist_ok=True, parents=True)
+        for id, image in model.images.items():
+            shutil.copy(images / image.name, savedImagePath/  image.name)
 

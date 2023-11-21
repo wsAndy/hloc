@@ -40,6 +40,7 @@ elif args.cameraMode == 'PER_IMAGE':
 
 image_options = {'camera_model':  args.camera }
 
+distorter = False
 if image_options['camera_model'] != 'PINHOLE' and image_options['camera_model'] != 'SIMPLE_PINHOLE':
     distorter = True
 if distorter:
@@ -66,8 +67,8 @@ if distorter:
     '''
     img_undist_cmd = ("colmap image_undistorter \
         --image_path " + str(images) + " \
-        --input_path " + str(sfm_dir) + "/distorted/sparse/0 \
-        --output_path " + str(sfm_dir) + "\
+        --input_path " + str(sfm_dir) + "/sparse/0 \
+        --output_path " + str(sfm_dir / '..') + "\
         --output_type COLMAP --max_image_size 4096 ")
 
     exit_code = os.system(img_undist_cmd)
@@ -76,14 +77,14 @@ if distorter:
         logging.error(f"Mapper failed with code {exit_code}. Exiting.")
         exit(exit_code)
 
-    files = os.listdir( sfm_dir / "sparse")
-    os.makedirs( sfm_dir / "sparse/0", exist_ok=True)
+    files = os.listdir( sfm_dir  / '..' / "sparse")
+    os.makedirs( sfm_dir  / '..' / "sparse/0", exist_ok=True)
     # Copy each file from the source directory to the destination directory
     for file in files:
         if file == '0':
             continue
-        source_file = os.path.join( sfm_dir, "sparse", file)
-        destination_file = os.path.join( sfm_dir, "sparse", "0", file)
+        source_file = os.path.join( sfm_dir  / '..' , "sparse", file)
+        destination_file = os.path.join( sfm_dir  / '..' , "sparse", "0", file)
         shutil.move(source_file, destination_file)
 
 else:

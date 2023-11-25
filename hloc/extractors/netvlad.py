@@ -61,6 +61,7 @@ class NetVLAD(BaseModel):
         # Download the checkpoint.
         checkpoint_path = Path(
             torch.hub.get_dir(), 'netvlad', conf['model_name'] + '.mat')
+        print('cache:', torch.hub.get_dir())
         if not checkpoint_path.exists():
             checkpoint_path.parent.mkdir(exist_ok=True, parents=True)
             url = self.checkpoint_urls[conf['model_name']]

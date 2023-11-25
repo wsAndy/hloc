@@ -1,6 +1,6 @@
 use docker image: wsandy95/hloc:latest
 
-docker run --name hloc_xxx -it --rm --gpus all --shm-size 8G -p 8888:8888 -v "E:\DigitalAssetsCreateTool\hloc":/root/code -v "E:\docker\nerfData\hloc":/root/data wsandy95/hloc:latest /bin/bash -c "cd /root/code && python3 runSFM.py -i /root/data/images/ -o /root/data/sfm"
+docker run --name hloc_xxx -it --rm --gpus all --shm-size 8G -p 8888:8888  -v "C:\Users\bigy2\.cache":/root/.cache -v "D:\nerfData\hloc":/root/code -v "D:\BaiduNetdiskDownload\all_scene_1121":/root/data wsandy95/hloc:latest /bin/bash -c "cd /root/code && python3 runSFM.py -i /root/data/images/ -o /root/data/sfm"
 
 注意： --shm-size 8G 很关键
 
